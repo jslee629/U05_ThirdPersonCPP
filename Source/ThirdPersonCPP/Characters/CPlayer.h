@@ -6,6 +6,8 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UCAttributeComponent;
+class UCOptionComponent;
 
 UCLASS()
 class THIRDPERSONCPP_API ACPlayer : public ACharacter
@@ -27,6 +29,9 @@ private:
 	void OnMoveRight(float AixsValue);
 	void OnTurn(float AixsValue);
 	void OnLookUp(float AixsValue);
+	void OnZoom(float AixsValue);
+	void OnWalk();
+	void OffWalk();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
@@ -35,4 +40,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
 	UCameraComponent* CameraComp;
 
+	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UCAttributeComponent* AttributeComp;
+
+	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UCOptionComponent* OptionComp;
 };
