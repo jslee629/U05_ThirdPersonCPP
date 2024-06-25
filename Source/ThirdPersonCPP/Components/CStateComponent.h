@@ -10,6 +10,7 @@ enum class EStateType : uint8
 	Idle,
 	Roll,
 	Backstep,
+	Equip,
 	Max
 };
 
@@ -36,9 +37,13 @@ public:
 	UFUNCTION(BlueprintPure, Category = "State")
 	FORCEINLINE bool IsBackstepMode() { return Type == EStateType::Backstep; }
 
+	UFUNCTION(BlueprintPure, Category = "State")
+	FORCEINLINE bool IsEquipMode() { return Type == EStateType::Equip; }
+
 	void SetIdleMode();
 	void SetRollMode();
 	void SetBackstepMode();
+	void SetEquipMode();
 
 private:
 	void ChangeType(EStateType InNewType);

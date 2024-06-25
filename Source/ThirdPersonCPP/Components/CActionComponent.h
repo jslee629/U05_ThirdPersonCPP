@@ -17,7 +17,9 @@ enum class EActionType : uint8
 	Max
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChanged, EActionType, InPrevType, EActionType, InNewType)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FActionTypeChanged, EActionType, InPrevType, EActionType, InNewType);
+
+class UCActionData;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class THIRDPERSONCPP_API UCActionComponent : public UActorComponent
@@ -62,7 +64,7 @@ public:
 	void SetWhirlwindMode();
 
 private:
-	void SetMode();
+	void SetMode(EActionType InNewType);
 	void ChangeType(EActionType InNewType);
 
 public:
@@ -70,5 +72,7 @@ public:
 	FActionTypeChanged OnActionTypeChanged;
 
 private:	
+	UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
+	UCActionData* DataAssets[(int32)EActionType::Max];
 	EActionType Type;
 };

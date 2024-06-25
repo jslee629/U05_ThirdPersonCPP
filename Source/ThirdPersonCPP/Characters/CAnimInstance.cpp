@@ -5,6 +5,12 @@
 void UCAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+	CheckNull(TryGetPawnOwner());
+
+	UCActionComponent* ActionComp = CHelpers::GetComponent<UCActionComponent>(TryGetPawnOwner());
+	CheckNull(ActionComp);
+
+	ActionComp->OnActionTypeChanged.AddDynamic(this, &UCAnimInstance::OnActionTypeChanged);
 }
 
 void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -16,4 +22,9 @@ void UCAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = Character->GetVelocity().Size2D();
 	Direction = CalculateDirection(Character->GetVelocity(), Character->GetControlRotation());
+}
+
+void UCAnimInstance::OnActionTypeChanged(EActionType InPrevType, EActionType InNewType)
+{
+	ActionType = InNewType;
 }
