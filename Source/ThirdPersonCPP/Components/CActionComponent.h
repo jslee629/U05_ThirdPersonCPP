@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
 
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE UCActionData* GetCurrentActionData() { return DataAssets[(int32)Type]; }
+
 public:
 	void SetUnarmedMode();
 	void SetFistMode();

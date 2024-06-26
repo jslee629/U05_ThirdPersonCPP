@@ -3,21 +3,24 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialInstanceConstant.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Actions/CActionData.h"
 
 ACPlayer::ACPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create Actor Component
+	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
+	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &OptionComp, "OptionComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
-	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
-	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
 
 	// Create Scene Component
 	CHelpers::CreateSceneComponent(this, &SpringArmComp, "SpringArmComp", GetMesh());
@@ -54,7 +57,24 @@ void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	//Bind Delegate in StateComp
 	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
+
+	//Create Dynamic Material
+	UMaterialInstanceConstant* BodyMaterialAsset;
+	UMaterialInstanceConstant* LogoMaterialAsset;
+
+	CHelpers::GetAssetDynamic(&BodyMaterialAsset, "/Game/Character/Materials/MI_UE4Man_Body_Inst");
+	CHelpers::GetAssetDynamic(&LogoMaterialAsset, "/Game/Character/Materials/M_UE4Man_ChestLogo");
+	
+	BodyMaterial = UMaterialInstanceDynamic::Create(BodyMaterialAsset, this);
+	LogoMaterial = UMaterialInstanceDynamic::Create(LogoMaterialAsset, this);
+
+	GetMesh()->SetMaterial(0, BodyMaterial);
+	GetMesh()->SetMaterial(1, LogoMaterial);
+
+	//Set Unarmed Mode
+	ActionComp->SetUnarmedMode();
 }
 
 void ACPlayer::Tick(float DeltaTime)
@@ -203,13 +223,22 @@ void ACPlayer::Begin_Backstep()
 
 void ACPlayer::End_Roll()
 {
+	if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == true)
+	{
+		bUseControllerRotationYaw = true;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+	}
+
 	StateComp->SetIdleMode();
 }
 
 void ACPlayer::End_Backstep()
 {
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
+	if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == false)
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+	}
 
 	StateComp->SetIdleMode();
 }
@@ -229,5 +258,11 @@ void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 		}
 		break;
 	}
+}
+
+void ACPlayer::ChangeBodyColor(FLinearColor InColor)
+{
+	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
+	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
 }
 
