@@ -48,10 +48,10 @@ void ACEnemy::BeginPlay()
 	GetMesh()->SetMaterial(0, BodyMaterial);
 	GetMesh()->SetMaterial(1, LogoMaterial);
 
+	Super::BeginPlay();
+
 	//Set Unarmed Mode
 	ActionComp->SetUnarmedMode();
-
-	Super::BeginPlay();
 }
 
 void ACEnemy::ChangeBodyColor(FLinearColor InColor)
