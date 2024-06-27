@@ -39,6 +39,8 @@ private:
 	void OnWalk();
 	void OffWalk();
 	void OnEvade();
+	void OnPrimaryAction();
+
 	void OnFist();
 	void OnOneHand();
 	void OnTwoHand();
@@ -80,7 +82,7 @@ protected:
 
 public:
 	// Inherited via ICCharacterInterface
-	virtual void ChangeBodyColor(FLinearColor InColor);
+	virtual void ChangeBodyColor(FLinearColor InColor) override;
 
 private:
 	UMaterialInstanceDynamic* BodyMaterial;

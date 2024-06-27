@@ -14,7 +14,7 @@ void ACAttachment::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ACAttachment::AttachTo(FName InSocketName)
+void ACAttachment::ActorAttachTo(FName InSocketName)
 {
 	AttachToComponent(OwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), InSocketName);
 }

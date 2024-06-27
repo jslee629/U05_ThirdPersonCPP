@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "Actions/CActionData.h"
 #include "ACtions/CEquipment.h"
+#include "ACtions/CDoAction.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -23,6 +24,16 @@ void UCActionComponent::BeginPlay()
 		{
 			DataAssets[i]->BeginPlay(OwnerCharacter);
 		}
+	}
+}
+
+void UCActionComponent::DoAction()
+{
+	CheckTrue(IsUnarmedMode());
+
+	if (DataAssets[(int32)Type] && DataAssets[(int32)Type]->GetDoAction())
+	{
+		DataAssets[(int32)Type]->GetDoAction()->DoAction();
 	}
 }
 
