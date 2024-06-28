@@ -9,8 +9,6 @@ UCStateComponent::UCStateComponent()
 void UCStateComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
 
 void UCStateComponent::SetIdleMode()
@@ -36,6 +34,16 @@ void UCStateComponent::SetEquipMode()
 void UCStateComponent::SetActionMode()
 {
 	ChangeType(EStateType::Action);
+}
+
+void UCStateComponent::SetHittedMode()
+{
+	ChangeType(EStateType::Hitted);
+}
+
+void UCStateComponent::SetDeadMode()
+{
+	ChangeType(EStateType::Dead);
 }
 
 void UCStateComponent::ChangeType(EStateType InNewType)

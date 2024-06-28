@@ -4,6 +4,20 @@
 #include "Components/CStateComponent.h"
 #include "Components/CAttributeComponent.h"
 
+void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
+{
+	Super::OnAttachmentBeginOverlap(InAttacker, InCauser, InOtherCharacter);
+
+	FDamageEvent DamageEvent;
+	InOtherCharacter->TakeDamage(Datas[ComboCount].Power, DamageEvent, InAttacker->GetController(), InCauser);
+}
+
+void ACDoAction_Melee::OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter)
+{
+	Super::OnAttachmentEndOverlap(InAttacker, InCauser, InOtherCharacter);
+
+}
+
 void ACDoAction_Melee::DoAction()
 {
 	Super::DoAction();

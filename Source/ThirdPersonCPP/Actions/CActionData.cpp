@@ -38,6 +38,12 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		DoAction->SetActorLabel(MakeActorLabel(InOwnerCharacter, "DoAction"));
 		DoAction->AttachToComponent(InOwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));		// for Whirlwind
 		DoAction->FinishSpawning(Transform);
+
+		if (Attachment)
+		{
+			Attachment->OnAttachmentBeginOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentBeginOverlap);
+			Attachment->OnAttachmentEndOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentEndOverlap);
+		}
 	}
 }
 
