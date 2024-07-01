@@ -12,13 +12,16 @@
 
 ACEnemy::ACEnemy()
 {
-	// Create Actor Component
+	//Initialize Properties
+	LaunchValue = 25.f;
+
+	//Create Actor Component
 	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
 	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
 
-	// Create Scene Component
+	//Create Scene Component
 	CHelpers::CreateSceneComponent(this, &NameWidgetComp, "NameWidgetComp", GetMesh());
 	CHelpers::CreateSceneComponent(this, &HealthWidgetComp, "HealthWidgetComp", GetMesh());
 
@@ -95,13 +98,22 @@ void ACEnemy::BeginPlay()
 
 void ACEnemy::ChangeBodyColor(FLinearColor InColor)
 {
+	CheckTrue(StateComp->IsDeadMode());
+
+	if (StateComp->IsHittedMode())
+	{
+		LogoMaterial->SetScalarParameterValue("bHitted", 1.f);
+		LogoMaterial->SetVectorParameterValue("LogoEmissive", InColor);
+		return;
+	}
+
 	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
 	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
 }
 
 float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	DamageInstigator = EventInstigator;
 
 	AttributeComp->DecreaseHealth(Damage);
@@ -136,15 +148,40 @@ void ACEnemy::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 
 void ACEnemy::Hitted()
 {
+	//Apply Health Widget
 	UCEnemyHealthWidget* HealthWidgetInstance = Cast<UCEnemyHealthWidget>(HealthWidgetComp->GetUserWidgetObject());
 	if (HealthWidgetInstance)
 	{
 		HealthWidgetInstance->ApplyHealth(AttributeComp->GetCurHealth(), AttributeComp->GetMaxHealth());
 	}
+
+	//Play Anim Montage
+	MontagesComp->PlayHitted();
+
+	//Turn to Instigator when hitted
+	FVector Start = GetActorLocation();
+	FVector Target = DamageInstigator->GetPawn()->GetActorLocation();
+	SetActorRotation(UKismetMathLibrary::FindLookAtRotation(Start, Target));
+
+	//Hit Back
+	FVector Direction = Start - Target;
+	Direction.Normalize();
+
+	LaunchCharacter(Direction * DamageValue * LaunchValue, true, false);
+
+	//Set Hitted Color
+	ChangeBodyColor(FLinearColor(40,0,0));
+	UKismetSystemLibrary::K2_SetTimer(this, "RestoreLogoColor", 0.5f, false);
 }
 
 void ACEnemy::Dead()
 {
+	MontagesComp->PlayDead();
+}
+
+void ACEnemy::RestoreLogoColor()
+{
+	LogoMaterial->SetScalarParameterValue("bHitted", 0.f);
 }
 
 

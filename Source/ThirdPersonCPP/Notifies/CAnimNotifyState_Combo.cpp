@@ -1,16 +1,15 @@
-#include "CAnimNotifyState_Collision.h"
+#include "CAnimNotifyState_Combo.h"
 #include "Global.h"
 #include "Components/CActionComponent.h"
-#include "Actions/CActionData.h"
-#include "Actions/CAttachment.h"
 #include "Actions/CDoAction_Melee.h"
+#include "Actions/CActionData.h"
 
-FString UCAnimNotifyState_Collision::GetNotifyName_Implementation() const
+FString UCAnimNotifyState_Combo::GetNotifyName_Implementation() const
 {
-	return "Collision";
+	return "Combo";
 }
 
-void UCAnimNotifyState_Collision::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
+void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration);
 	CheckNull(MeshComp->GetOwner());
@@ -21,14 +20,13 @@ void UCAnimNotifyState_Collision::NotifyBegin(USkeletalMeshComponent* MeshComp, 
 	UCActionData* ActionData = ActionComp->GetCurrentActionData();
 	CheckNull(ActionData);
 
-	ACAttachment* Attachment = ActionData->GetAttachment();
-	CheckNull(Attachment);
+	ACDoAction_Melee* DoAction_Melee = Cast<ACDoAction_Melee>(ActionData->GetDoAction());
+	CheckNull(DoAction_Melee);
 
-	Attachment->OnCollision();
+	DoAction_Melee->EnableCombo();
 }
 
-
-void UCAnimNotifyState_Collision::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
 	Super::NotifyEnd(MeshComp, Animation);
 	CheckNull(MeshComp->GetOwner());
@@ -39,13 +37,9 @@ void UCAnimNotifyState_Collision::NotifyEnd(USkeletalMeshComponent* MeshComp, UA
 	UCActionData* ActionData = ActionComp->GetCurrentActionData();
 	CheckNull(ActionData);
 
-	ACAttachment* Attachment = ActionData->GetAttachment();
-	CheckNull(Attachment);
-
-	Attachment->OffCollision();
-
 	ACDoAction_Melee* DoAction_Melee = Cast<ACDoAction_Melee>(ActionData->GetDoAction());
 	CheckNull(DoAction_Melee);
 
-	DoAction_Melee->ClearHittedCharacters();
+	DoAction_Melee->DisableCombo();
+
 }

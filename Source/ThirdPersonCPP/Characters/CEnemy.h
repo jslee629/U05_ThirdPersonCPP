@@ -25,23 +25,26 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:	
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UCAttributeComponent* AttributeComp;
 
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UCStateComponent* StateComp;
 
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UCMontagesComponent* MontagesComp;
 
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UCActionComponent* ActionComp;
 
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UWidgetComponent* NameWidgetComp;
 
-	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
 	UWidgetComponent* HealthWidgetComp;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Components")
+	float LaunchValue;
 
 public:
 	// Inherited via ICCharacterInterface
@@ -56,9 +59,13 @@ private:
 	void Hitted();
 	void Dead();
 
+	UFUNCTION()
+	void RestoreLogoColor();
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
 
 	AController* DamageInstigator;
+	float DamageValue;
 };
