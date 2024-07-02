@@ -20,8 +20,15 @@ void ACDoAction_Melee::OnAttachmentBeginOverlap(ACharacter* InAttacker, AActor* 
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.02f);
 		UKismetSystemLibrary::K2_SetTimer(this, "RestoreGlobalTimeDilation", HitStop * 0.02f, false);
 	}
-	//TODO: RestoreGlobalTimeDilation
 
+	//Emit Particles
+	UParticleSystem* HitEffect = Datas[ComboCount].Effect;
+	if (HitEffect)
+	{
+		FTransform Transform = Datas[ComboCount].EffectTransform;
+		Transform.AddToTranslation(InOtherCharacter->GetActorLocation());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitEffect, Transform);
+	}
 
 	//CameraShake
 	TSubclassOf<UCameraShake> ShakeClass = Datas[ComboCount].ShakeClass;
@@ -106,4 +113,9 @@ void ACDoAction_Melee::DisableCombo()
 void ACDoAction_Melee::ClearHittedCharacters()
 {
 	HittedCharacters.Empty();
+}
+
+void ACDoAction_Melee::RestoreGlobalTimeDilation()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 }

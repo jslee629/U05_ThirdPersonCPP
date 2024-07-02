@@ -4,7 +4,6 @@
 #include "GameFramework/Actor.h"
 #include "CAttachment.generated.h"
 
-class USceneComponent;
 class UShapeComponent;
 class ACharacter;
 
@@ -48,6 +47,8 @@ public:
 protected:
 	UFUNCTION(BlueprintCallable)
 	void ActorAttachTo(FName InSocketName);
+	UFUNCTION(BlueprintCallable)
+	void ComponentAttachTo(USceneComponent* InComp, FName InSocketName);
 
 private:	
 	UPROPERTY(VisibleDefaultsOnly)

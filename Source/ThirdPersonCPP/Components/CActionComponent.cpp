@@ -2,8 +2,9 @@
 #include "Global.h"
 #include "GameFramework/Character.h"
 #include "Actions/CActionData.h"
-#include "ACtions/CEquipment.h"
-#include "ACtions/CDoAction.h"
+#include "Actions/CEquipment.h"
+#include "Actions/CDoAction.h"
+#include "Actions/CAttachment.h"
 
 UCActionComponent::UCActionComponent()
 {
@@ -34,6 +35,17 @@ void UCActionComponent::DoAction()
 	if (DataAssets[(int32)Type] && DataAssets[(int32)Type]->GetDoAction())
 	{
 		DataAssets[(int32)Type]->GetDoAction()->DoAction();
+	}
+}
+
+void UCActionComponent::OffAllCollisions()
+{
+	for (const auto& DataAsset : DataAssets)
+	{
+		if (DataAsset && DataAsset->GetAttachment())
+		{
+			DataAsset->GetAttachment()->OffCollision();
+		}
 	}
 }
 
