@@ -40,6 +40,8 @@ private:
 	void OffWalk();
 	void OnEvade();
 	void OnPrimaryAction();
+	void OnSecondaryAction();
+	void OffSecondaryAction();
 
 	void OnFist();
 	void OnOneHand();

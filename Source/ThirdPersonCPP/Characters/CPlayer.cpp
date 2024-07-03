@@ -98,10 +98,13 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	PlayerInputComponent->BindAction("Evade", EInputEvent::IE_Pressed, this, &ACPlayer::OnEvade);
 	PlayerInputComponent->BindAction("PrimaryAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnPrimaryAction);
+	PlayerInputComponent->BindAction("SecondaryAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSecondaryAction);
+	PlayerInputComponent->BindAction("SecondaryAction", EInputEvent::IE_Released, this, &ACPlayer::OffSecondaryAction);
 
 	PlayerInputComponent->BindAction("Fist", EInputEvent::IE_Pressed, this, &ACPlayer::OnFist);
 	PlayerInputComponent->BindAction("OneHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnOneHand);
 	PlayerInputComponent->BindAction("TwoHand", EInputEvent::IE_Pressed, this, &ACPlayer::OnTwoHand);
+	PlayerInputComponent->BindAction("MagicBall", EInputEvent::IE_Pressed, this, &ACPlayer::OnMagicBall);
 
 }
 
@@ -175,6 +178,16 @@ void ACPlayer::OnPrimaryAction()
 	ActionComp->DoAction();
 }
 
+void ACPlayer::OnSecondaryAction()
+{
+	ActionComp->DoSubAction(true);
+}
+
+void ACPlayer::OffSecondaryAction()
+{
+	ActionComp->DoSubAction(false);
+}
+
 void ACPlayer::OnFist()
 {
 	CheckFalse(StateComp->IsIdleMode());
@@ -194,6 +207,13 @@ void ACPlayer::OnTwoHand()
 	CheckFalse(StateComp->IsIdleMode());
 
 	ActionComp->SetTwoHandMode();
+}
+
+void ACPlayer::OnMagicBall()
+{
+	CheckFalse(StateComp->IsIdleMode());
+
+	ActionComp->SetMagicBallMode();
 }
 
 void ACPlayer::Begin_Roll()
@@ -245,12 +265,12 @@ void ACPlayer::End_Roll()
 
 void ACPlayer::End_Backstep()
 {
-	if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == false)
+	if (ActionComp->GetCurrentActionData() == nullptr)
 	{
 		bUseControllerRotationYaw = true;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 	}
-	else if (ActionComp->GetCurrentActionData() == nullptr)
+	else if (ActionComp->GetCurrentActionData()->EquipmentData.bLookForward == false)
 	{
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;

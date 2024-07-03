@@ -34,7 +34,17 @@ void UCActionComponent::DoAction()
 
 	if (DataAssets[(int32)Type] && DataAssets[(int32)Type]->GetDoAction())
 	{
-		DataAssets[(int32)Type]->GetDoAction()->DoAction();
+		ACDoAction* DoAction = DataAssets[(int32)Type]->GetDoAction();
+		DoAction->DoAction();
+	}
+}
+
+void UCActionComponent::DoSubAction(bool bBegin)
+{
+	if (DataAssets[(int32)Type] && DataAssets[(int32)Type]->GetDoAction())
+	{
+		ACDoAction* DoAction = DataAssets[(int32)Type]->GetDoAction();
+		bBegin ? DoAction->Begin_SubAction() : DoAction->End_SubAction();
 	}
 }
 

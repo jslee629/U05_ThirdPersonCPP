@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Interfaces/CCharacterInterface.h"
 #include "Components/CStateComponent.h"
+#include "Components/TimelineComponent.h"
 #include "CEnemy.generated.h"
 
 class UCAttributeComponent;
@@ -12,6 +13,7 @@ class UCActionComponent;
 class UMaterialInstanceDynamic;
 class UWidgetComponent;
 class AController;
+class UCurveFloat;
 
 UCLASS()
 class THIRDPERSONCPP_API ACEnemy : public ACharacter, public ICCharacterInterface
@@ -23,6 +25,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+public:
+	virtual void Tick(float DeltaTime) override;
 
 protected:	
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Components")
@@ -46,6 +51,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Components")
 	float LaunchValue;
 
+	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Curve")
+	UCurveFloat* DissolveCurve;
+
 public:
 	// Inherited via ICCharacterInterface
 	virtual void ChangeBodyColor(FLinearColor InColor) override;
@@ -62,10 +70,21 @@ private:
 	UFUNCTION()
 	void RestoreLogoColor();
 
+	UFUNCTION()
+	void StartDissolve(float Output);
+
+	UFUNCTION()
+	void EndDissolve();
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
 
+	UPROPERTY(VisibleInstanceOnly)
+	UMaterialInstanceDynamic* DissolveMaterial;		//c++에서 알아서 할당 해제를 하지 않도록 해줌
+
 	AController* DamageInstigator;
 	float DamageValue;
+
+	FTimeline DissolveTime;
 };

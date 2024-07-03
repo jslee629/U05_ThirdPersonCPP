@@ -28,6 +28,8 @@ public:
 	virtual void DoAction() {};
 	virtual void Begin_DoAction() {};
 	virtual void End_DoAction() {};
+	virtual void Begin_SubAction() {};
+	virtual void End_SubAction() {};
 
 public:
 	UFUNCTION()
