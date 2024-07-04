@@ -11,6 +11,7 @@ class ACAttachment;
 class ACDoAction;
 class UParticleSystem;
 class UCameraShake;
+class ACProjectile;
 
 USTRUCT(BlueprintType)
 struct FEquipmentData
@@ -28,7 +29,6 @@ public:
 	bool bCanMove = true;
 	UPROPERTY(EditDefaultsOnly)
 	bool bLookForward = true;
-
 };
 
 USTRUCT(BlueprintType)
@@ -47,6 +47,8 @@ public:
 	FTransform EffectTransform;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShake> ShakeClass;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ACProjectile> ProjectileClass;
 };
 
 UCLASS()

@@ -14,6 +14,10 @@ class THIRDPERSONCPP_API ACDoAction_MagicBall : public ACDoAction
 protected:
 	virtual void BeginPlay() override;
 
+private:
+	UFUNCTION()
+	void OnProjectileBeginOverlap(FHitResult InHitResult);
+
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void DoAction() override;
