@@ -24,6 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetDatas(const TArray<FDoActionData>& InDatas);
+	void SetEquipped(const bool* InEquipped);
 
 	virtual void DoAction() {};
 	virtual void Begin_DoAction() {};
@@ -47,4 +48,5 @@ protected:
 
 protected:
 	TArray<FDoActionData> Datas;
+	const bool* bEquipped;
 };

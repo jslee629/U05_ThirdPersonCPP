@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Actions/CDoAction.h"
+#include "Components/CActionComponent.h"
 #include "CDoAction_MagicBall.generated.h"
 
 class UCAim;
@@ -17,6 +18,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnProjectileBeginOverlap(FHitResult InHitResult);
+
+	UFUNCTION()
+	void AbortByActionTypeChanged(EActionType InPrevType, EActionType InNewType);
 
 public:
 	virtual void Tick(float DeltaTime) override;

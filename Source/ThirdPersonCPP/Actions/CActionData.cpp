@@ -39,6 +39,11 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter)
 		DoAction->AttachToComponent(InOwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));		// for Whirlwind
 		DoAction->FinishSpawning(Transform);
 
+		if (Equipment)
+		{
+			DoAction->SetEquipped(Equipment->IsEquipped());
+		}
+
 		if (Attachment)
 		{
 			Attachment->OnAttachmentBeginOverlap.AddDynamic(DoAction, &ACDoAction::OnAttachmentBeginOverlap);
