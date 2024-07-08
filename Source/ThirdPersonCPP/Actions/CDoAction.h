@@ -31,6 +31,7 @@ public:
 	virtual void End_DoAction() {};
 	virtual void Begin_SubAction() {};
 	virtual void End_SubAction() {};
+	virtual void Abort() {};
 
 public:
 	UFUNCTION()

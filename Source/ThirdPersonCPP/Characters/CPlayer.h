@@ -48,6 +48,7 @@ private:
 	void OnTwoHand();
 	void OnMagicBall();
 	void OnWarp();
+	void OnWhirlwind();
 	
 private:
 	void Begin_Roll();
