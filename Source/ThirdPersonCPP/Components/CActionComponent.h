@@ -4,6 +4,9 @@
 #include "Components/ActorComponent.h"
 #include "CActionComponent.generated.h"
 
+class UCActionData;
+class UCAction;
+
 UENUM(BlueprintType)
 enum class EActionType : uint8
 {
@@ -62,7 +65,11 @@ public:
 	FORCEINLINE bool IsWhirlwindMode() { return Type == EActionType::Whirlwind; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE UCActionData* GetCurrentActionData() { return DataAssets[(int32)Type]; }
+	FORCEINLINE UCAction* GetCurrentActionData() { return Datas[(int32)Type]; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE UCActionData* GetCurrentActionDataAsset() { return DataAssets[(int32)Type]; }
+
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -91,5 +98,10 @@ public:
 private:	
 	UPROPERTY(EditDefaultsOnly, Category = "DataAsset")
 	UCActionData* DataAssets[(int32)EActionType::Max];
+
+private:
 	EActionType Type;
+
+	UPROPERTY()
+	UCAction* Datas[(int32)EActionType::Max];
 };
