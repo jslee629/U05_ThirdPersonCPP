@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CStateComponent.h"
 #include "Interfaces/CCharacterInterface.h"
+#include "GenericTeamAgentInterface.h"
 #include "CPlayer.generated.h"
 
 class USpringArmComponent;
@@ -16,7 +17,7 @@ class UCActionComponent;
 class UMaterialInstanceDynamic;
 
 UCLASS()
-class THIRDPERSONCPP_API ACPlayer : public ACharacter, public ICCharacterInterface
+class THIRDPERSONCPP_API ACPlayer : public ACharacter, public ICCharacterInterface, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -29,6 +30,7 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual FGenericTeamId GetGenericTeamId() const override;
 
 private:
 	void OnMoveForward(float AixsValue);
@@ -83,6 +85,10 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Instanced, VisibleDefaultsOnly, Category = "Components")
 	UCActionComponent* ActionComp;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "TeamId")
+	uint8 TeamId;
 
 public:
 	// Inherited via ICCharacterInterface
