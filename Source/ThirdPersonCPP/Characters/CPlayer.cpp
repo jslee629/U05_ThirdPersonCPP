@@ -5,6 +5,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerController.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
@@ -16,14 +18,14 @@ ACPlayer::ACPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Create Actor Component
+	//Create Actor Component
 	CHelpers::CreateActorComponent(this, &ActionComp, "ActionComp");
 	CHelpers::CreateActorComponent(this, &MontagesComp, "MontagesComp");
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &OptionComp, "OptionComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
 
-	// Create Scene Component
+	//Create Scene Component
 	CHelpers::CreateSceneComponent(this, &SpringArmComp, "SpringArmComp", GetMesh());
 	CHelpers::CreateSceneComponent(this, &CameraComp, "CameraComp", SpringArmComp);
 
@@ -57,7 +59,7 @@ ACPlayer::ACPlayer()
 void ACPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	//Bind Delegate in StateComp
 	StateComp->OnStateTypeChanged.AddDynamic(this, &ACPlayer::OnStateTypeChanged);
 
@@ -76,7 +78,24 @@ void ACPlayer::BeginPlay()
 
 	//Set Unarmed Mode
 	ActionComp->SetUnarmedMode();
+
+	/*
+	* 이슈: 이상하게도 블루프린트 위젯을 찾아오지 못함
+	* 
+	//Create Select Action Widget
+	TSubclassOf<UUserWidget> UserWidgetClass;
+	CHelpers::GetClass(&UserWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_SelectAction.WB_SelectAction_C'");
+	SelectActionWidget = CreateWidget(Cast<APlayerController>(GetController()), UserWidgetClass);
+	CheckNull(SelectActionWidget);
+	SelectActionWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	//Add Select Action Widget to Viewport
+	SelectActionWidget->AddToViewport();
+	*
+	* 
+	*/
 }
+
 
 void ACPlayer::Tick(float DeltaTime)
 {
@@ -109,6 +128,8 @@ void ACPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Warp", EInputEvent::IE_Pressed, this, &ACPlayer::OnWarp);
 	PlayerInputComponent->BindAction("Whirlwind", EInputEvent::IE_Pressed, this, &ACPlayer::OnWhirlwind);
 
+	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Pressed, this, &ACPlayer::OnSelectAction);
+	PlayerInputComponent->BindAction("SelectAction", EInputEvent::IE_Released, this, &ACPlayer::OffSelectAction);
 }
 
 FGenericTeamId ACPlayer::GetGenericTeamId() const
@@ -238,6 +259,34 @@ void ACPlayer::OnWhirlwind()
 	ActionComp->SetWhirlwindMode();
 }
 
+void ACPlayer::OnSelectAction()
+{
+	CheckFalse(StateComp->IsIdleMode());
+
+	SelectActionWidget->SetVisibility(ESlateVisibility::Visible);
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.1f);
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	CheckNull(PC);
+	PC->bShowMouseCursor = true;
+	FInputModeGameAndUI GameAndUI;
+	PC->SetInputMode(GameAndUI);
+}
+
+void ACPlayer::OffSelectAction()
+{
+	SelectActionWidget->SetVisibility(ESlateVisibility::Hidden);
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	CheckNull(PC);
+	PC->bShowMouseCursor = false;
+	FInputModeGameOnly GameOnly;
+	PC->SetInputMode(GameOnly);
+}
+
 void ACPlayer::Begin_Roll()
 {
 	bUseControllerRotationYaw = false;
@@ -322,5 +371,10 @@ void ACPlayer::ChangeBodyColor(FLinearColor InColor)
 {
 	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
 	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
+}
+
+void ACPlayer::SetSelectActionWidget(UUserWidget* InWidget)
+{
+	SelectActionWidget = InWidget;
 }
 

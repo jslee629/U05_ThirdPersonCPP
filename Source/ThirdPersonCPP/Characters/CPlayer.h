@@ -15,6 +15,7 @@ class UCStateComponent;
 class UCMontagesComponent;
 class UCActionComponent;
 class UMaterialInstanceDynamic;
+class UUserWidget;
 
 UCLASS()
 class THIRDPERSONCPP_API ACPlayer : public ACharacter, public ICCharacterInterface, public IGenericTeamAgentInterface
@@ -51,7 +52,9 @@ private:
 	void OnMagicBall();
 	void OnWarp();
 	void OnWhirlwind();
-	
+	void OnSelectAction();
+	void OffSelectAction();
+
 private:
 	void Begin_Roll();
 	void Begin_Backstep();
@@ -94,7 +97,11 @@ public:
 	// Inherited via ICCharacterInterface
 	virtual void ChangeBodyColor(FLinearColor InColor) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Widgets")
+	void SetSelectActionWidget(UUserWidget* InWidget);
+
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
+	UUserWidget* SelectActionWidget;
 };
