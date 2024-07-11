@@ -86,6 +86,7 @@ void ACPlayer::BeginPlay()
 	TSubclassOf<UUserWidget> UserWidgetClass;
 	CHelpers::GetClass(&UserWidgetClass, "WidgetBlueprint'/Game/Widgets/WB_SelectAction.WB_SelectAction_C'");
 	SelectActionWidget = CreateWidget(Cast<APlayerController>(GetController()), UserWidgetClass);
+	--> 오류 확인: Controller가 아닌 GetWorld()를 넣었어야 함
 	CheckNull(SelectActionWidget);
 	SelectActionWidget->SetVisibility(ESlateVisibility::Hidden);
 
