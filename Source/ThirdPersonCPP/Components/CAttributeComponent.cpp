@@ -1,5 +1,6 @@
 #include "CAttributeComponent.h"
 #include "Global.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UCAttributeComponent::UCAttributeComponent()
 {
@@ -40,6 +41,14 @@ void UCAttributeComponent::SetMove()
 void UCAttributeComponent::SetStop()
 {
 	bCanMove = false;
+}
+
+void UCAttributeComponent::SetWalkSpeed(EWalkSpeedType InWalkSpeed)
+{
+	UCharacterMovementComponent* MovementComp = CHelpers::GetComponent<UCharacterMovementComponent>(GetOwner());
+	CheckNull(MovementComp);
+
+	MovementComp->MaxWalkSpeed = WalkSpeeds[(int32)InWalkSpeed];
 }
 
 

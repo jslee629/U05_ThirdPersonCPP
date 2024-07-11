@@ -5,6 +5,7 @@
 #include "Characters/CPlayer.h"
 #include "Components/CBehaviorComponent.h"
 #include "Components/CStateComponent.h"
+#include "Components/CPatrolComponent.h"
 
 UCBTService_Melee::UCBTService_Melee()
 {
@@ -21,6 +22,7 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UCBehaviorComponent* BehaviorComp = CHelpers::GetComponent<UCBehaviorComponent>(AIC);
 	UCStateComponent* StateComp = CHelpers::GetComponent<UCStateComponent>(EnemyPawn);
+	UCPatrolComponent* PatrolComp = CHelpers::GetComponent<UCPatrolComponent>(EnemyPawn);
 
 	//Is Hitted
 	if (StateComp->IsHittedMode())
@@ -32,13 +34,32 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	//Try Get PlayerKey from BB
 	ACPlayer* Player = BehaviorComp->GetPlayerKey();
 
-	//player not detected
+	//Player not detected
 	if (Player == nullptr)
 	{
-		BehaviorComp->SetWaitMode();
+		if (PatrolComp->IsPathValid())
+		{
+			BehaviorComp->SetPatrolMode();
+			return;
+		}
+		else
+		{
+			BehaviorComp->SetWaitMode();
+			return;
+		}
+	}
+
+	//Player detected
+	float Distance = EnemyPawn->GetDistanceTo(Player);
+
+	if (Distance < AIC->GetBehaviorRange())
+	{
+		BehaviorComp->SetActionMode();
 		return;
 	}
 
-	//player detected
-	//TODO: 감지 범위를 AIController를 통해서 가져오고 공격 범위를 공개 변수로
+	if (Distance < AIC->GetSightRadius())
+	{
+		BehaviorComp->SetApproachMode();
+	}
 }
