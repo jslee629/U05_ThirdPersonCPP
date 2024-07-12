@@ -14,6 +14,8 @@ ACAIController::ACAIController()
 
 	//initialize vairables
 	BehaviorRange = 150.f;
+	bDrawRange = true;
+	Segment = 32;
 
 	//create components
 	CHelpers::CreateActorComponent<UBlackboardComponent>(this, &Blackboard, "BlackboardComp");
@@ -65,6 +67,11 @@ void ACAIController::OnUnPossess()
 void ACAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CheckFalse(bDrawRange);
+	FVector Center = OwnerEnemy->GetActorLocation();
+	DrawDebugSphere(GetWorld(), Center, Sight->SightRadius, Segment, FColor::Green);
+	DrawDebugSphere(GetWorld(), Center, BehaviorRange, Segment, FColor::Red);
 }
 
 float ACAIController::GetSightRadius()

@@ -1,19 +1,20 @@
-#include "CBTService_Melee.h"
+#include "CBTService_Wizard.h"
 #include "Global.h"
 #include "Characters/CAIController.h"
 #include "Characters/CEnemy_AI.h"
 #include "Characters/CPlayer.h"
 #include "Components/CBehaviorComponent.h"
 #include "Components/CStateComponent.h"
-#include "Components/CPatrolComponent.h"
 
-UCBTService_Melee::UCBTService_Melee()
+UCBTService_Wizard::UCBTService_Wizard()
 {
-	NodeName = "Root_Melee";
+	NodeName = "Root_Wizard";
 }
 
-void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UCBTService_Wizard::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
 	ACAIController* AIC = Cast<ACAIController>(OwnerComp.GetOwner());
 	CheckNull(AIC);
 
@@ -22,7 +23,6 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	UCBehaviorComponent* BehaviorComp = CHelpers::GetComponent<UCBehaviorComponent>(AIC);
 	UCStateComponent* StateComp = CHelpers::GetComponent<UCStateComponent>(EnemyPawn);
-	UCPatrolComponent* PatrolComp = CHelpers::GetComponent<UCPatrolComponent>(EnemyPawn);
 
 	//Is Hitted
 	if (StateComp->IsHittedMode())
@@ -38,30 +38,23 @@ void UCBTService_Melee::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 	if (Player == nullptr)
 	{
 		AIC->ClearFocus(EAIFocusPriority::Gameplay);
-		
-		if (PatrolComp->IsPathValid())
-		{
-			BehaviorComp->SetPatrolMode();
-			return;
-		}
-		else
-		{
-			BehaviorComp->SetWaitMode();
-			return;
-		}
+		BehaviorComp->SetWaitMode();
+		return;
 	}
 
 	//Player detected
+	AIC->SetFocus(Player);
+
 	float Distance = EnemyPawn->GetDistanceTo(Player);
 
 	if (Distance < AIC->GetBehaviorRange())
 	{
-		BehaviorComp->SetActionMode();
+		BehaviorComp->SetEscapeMode();
 		return;
 	}
 
 	if (Distance < AIC->GetSightRadius())
 	{
-		BehaviorComp->SetApproachMode();
+		BehaviorComp->SetActionMode();
 	}
 }
