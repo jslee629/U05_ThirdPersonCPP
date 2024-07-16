@@ -15,6 +15,7 @@ class UCStateComponent;
 class UCMontagesComponent;
 class UCActionComponent;
 class UMaterialInstanceDynamic;
+class AController;
 
 UCLASS()
 class THIRDPERSONCPP_API ACPlayer : public ACharacter, public ICCharacterInterface, public IGenericTeamAgentInterface
@@ -52,6 +53,12 @@ private:
 	void OnWarp();
 	void OnWhirlwind();
 	
+	void Hitted();
+	void Dead();
+
+	UFUNCTION()
+	void End_Dead();
+
 private:
 	void Begin_Roll();
 	void Begin_Backstep();
@@ -93,8 +100,12 @@ private:
 public:
 	// Inherited via ICCharacterInterface
 	virtual void ChangeBodyColor(FLinearColor InColor) override;
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	UMaterialInstanceDynamic* BodyMaterial;
 	UMaterialInstanceDynamic* LogoMaterial;
+
+	float DamageValue;
+	AController* DamageInstigator;
 };

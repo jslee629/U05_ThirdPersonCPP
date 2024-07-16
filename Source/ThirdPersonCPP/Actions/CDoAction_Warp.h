@@ -22,6 +22,7 @@ public:
 
 private:
 	bool GetCursorLocationAndRotation(FVector& OutLocation, FRotator& OutRotation);
+	bool IsPlayerClass();
 
 private:
 	USkeletalMeshComponent* PreviewMeshComp;

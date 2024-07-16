@@ -1,11 +1,14 @@
 #include "CDoAction_Warp.h"
 #include "Global.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameFramework/Controller.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Materials/MaterialInstance.h"
 #include "Components/CStateComponent.h"
 #include "Components/CAttributeComponent.h"
+#include "Components/CBehaviorComponent.h"
 #include "CAttachment.h"
 
 void ACDoAction_Warp::BeginPlay()
@@ -30,6 +33,7 @@ void ACDoAction_Warp::Tick(float DeltaTime)
 	PreviewMeshComp->SetVisibility(false);
 
 	CheckFalse(*bEquipped);			// 주소를 가져왔으니 앞에 * 연산자 붙이는거 주의
+	CheckFalse(IsPlayerClass());	// 플레이어가 아니면 막자
 
 	FVector CurLoc;
 	FRotator CurRot;
@@ -47,8 +51,21 @@ void ACDoAction_Warp::DoAction()
 
 	CheckFalse(StateComp->IsIdleMode());
 
-	FRotator Temp;
-	CheckFalse(GetCursorLocationAndRotation(Location, Temp));
+	if (IsPlayerClass())
+	{
+		FRotator Temp;
+		CheckFalse(GetCursorLocationAndRotation(Location, Temp));
+	}
+	else
+	{
+		AController* AIC = OwnerCharacter->GetController();
+		if (AIC)
+		{
+			UCBehaviorComponent* BehaviorComp = CHelpers::GetComponent<UCBehaviorComponent>(AIC);
+			CheckNull(BehaviorComp);
+			Location = BehaviorComp->GetLocationKey();
+		}
+	}
 
 	StateComp->SetActionMode();
 
@@ -97,4 +114,9 @@ bool ACDoAction_Warp::GetCursorLocationAndRotation(FVector& OutLocation, FRotato
 	}
 
 	return false;
+}
+
+bool ACDoAction_Warp::IsPlayerClass()
+{
+	return (OwnerCharacter->GetClass()) == (GetWorld()->GetAuthGameMode()->DefaultPawnClass);
 }

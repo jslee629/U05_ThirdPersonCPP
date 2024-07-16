@@ -54,6 +54,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly, VisibleDefaultsOnly, Category = "Curve")
 	UCurveFloat* DissolveCurve;
 
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	bool bVisibleNameWidget;
+
 public:
 	// Inherited via ICCharacterInterface
 	virtual void ChangeBodyColor(FLinearColor InColor) override;

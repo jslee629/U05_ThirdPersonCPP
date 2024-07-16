@@ -55,6 +55,7 @@ ACEnemy::ACEnemy()
 	NameWidgetComp->SetRelativeLocation(FVector(0, 0, 240));
 	NameWidgetComp->SetDrawSize(FVector2D(240, 30));
 	NameWidgetComp->SetWidgetSpace(EWidgetSpace::Screen);
+	NameWidgetComp->SetVisibility(bVisibleNameWidget);
 
 	TSubclassOf<UCEnemyHealthWidget> HealthWidgetAsset;
 	CHelpers::GetClass(&HealthWidgetAsset, "/Game/Widgets/WB_EnemyHealth");
@@ -151,6 +152,7 @@ float ACEnemy::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AContro
 	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	DamageInstigator = EventInstigator;
 
+	ActionComp->Abort();
 	AttributeComp->DecreaseHealth(Damage);
 
 	if (AttributeComp->GetCurHealth() <= 0.f)
@@ -255,6 +257,7 @@ void ACEnemy::StartDissolve(float Output)
 
 void ACEnemy::EndDissolve()
 {
+	ActionComp->DestroyAll();
 	Destroy();
 }
 

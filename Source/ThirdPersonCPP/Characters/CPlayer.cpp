@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Materials/MaterialInstanceConstant.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
@@ -238,6 +239,36 @@ void ACPlayer::OnWhirlwind()
 	ActionComp->SetWhirlwindMode();
 }
 
+void ACPlayer::Hitted()
+{
+	//Play Anim Montage
+	MontagesComp->PlayHitted();
+
+	//Enable to Move When End hitted
+	AttributeComp->SetStop();
+}
+
+void ACPlayer::Dead()
+{
+	//Ragdoll
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionProfileName("Ragdoll");
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->DisableMovement();
+
+	//Off All Attachment Collisions
+	ActionComp->OffAllCollisions();
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.25f);
+	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 2.f, false);
+}
+
+
+void ACPlayer::End_Dead()
+{
+	CLog::Print("Game Over");
+}
+
 void ACPlayer::Begin_Roll()
 {
 	bUseControllerRotationYaw = false;
@@ -315,6 +346,16 @@ void ACPlayer::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 			Begin_Backstep();
 		}
 		break;
+	case EStateType::Hitted:
+		{
+			Hitted();
+		}
+		break;
+	case EStateType::Dead:
+		{
+			Dead();
+		}
+		break;
 	}
 }
 
@@ -322,5 +363,24 @@ void ACPlayer::ChangeBodyColor(FLinearColor InColor)
 {
 	BodyMaterial->SetVectorParameterValue("BodyColor", InColor);
 	LogoMaterial->SetVectorParameterValue("BodyColor", InColor);
+}
+
+float ACPlayer::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	DamageValue = Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+	DamageInstigator = EventInstigator;
+
+	ActionComp->Abort();
+	AttributeComp->DecreaseHealth(Damage);
+
+	if (AttributeComp->GetCurHealth() <= 0.f)
+	{
+		StateComp->SetDeadMode();
+		return 0.f;
+	}
+
+	StateComp->SetHittedMode();
+
+	return DamageValue;
 }
 
