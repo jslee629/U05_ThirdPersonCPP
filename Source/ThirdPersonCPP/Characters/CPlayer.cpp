@@ -6,6 +6,7 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "Materials/MaterialInstanceConstant.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Components/CAttributeComponent.h"
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
@@ -27,6 +28,7 @@ ACPlayer::ACPlayer()
 	// Create Scene Component
 	CHelpers::CreateSceneComponent(this, &SpringArmComp, "SpringArmComp", GetMesh());
 	CHelpers::CreateSceneComponent(this, &CameraComp, "CameraComp", SpringArmComp);
+	CHelpers::CreateSceneComponent(this, &PostProcessComp, "PostProcessComp", RootComponent);
 
 	//Component Settings
 	//-> MeshComp
@@ -53,6 +55,12 @@ ACPlayer::ACPlayer()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->MaxWalkSpeed = AttributeComp->GetSprintSpeed();
 	GetCharacterMovement()->RotationRate = FRotator(0, 720.f, 0);
+
+	//->PostProcess
+	PostProcessComp->Settings.bOverride_VignetteIntensity = false;
+	PostProcessComp->Settings.VignetteIntensity = 2.f;
+	PostProcessComp->Settings.bOverride_DepthOfFieldFocalDistance = false;
+	PostProcessComp->Settings.DepthOfFieldFocalDistance = 100.f;
 }
 
 void ACPlayer::BeginPlay()
@@ -258,6 +266,10 @@ void ACPlayer::Dead()
 
 	//Off All Attachment Collisions
 	ActionComp->OffAllCollisions();
+
+	//Enable Post Process
+	PostProcessComp->Settings.bOverride_VignetteIntensity = true;
+	PostProcessComp->Settings.bOverride_DepthOfFieldFocalDistance = true;
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.25f);
 	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 2.f, false);
