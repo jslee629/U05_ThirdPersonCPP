@@ -11,6 +11,7 @@
 #include "Components/COptionComponent.h"
 #include "Components/CMontagesComponent.h"
 #include "Components/CActionComponent.h"
+#include "Components/CFeetComponent.h"
 #include "Actions/CActionData.h"
 #include "Actions/CAction.h"
 
@@ -24,6 +25,7 @@ ACPlayer::ACPlayer()
 	CHelpers::CreateActorComponent(this, &AttributeComp, "AttributeComp");
 	CHelpers::CreateActorComponent(this, &OptionComp, "OptionComp");
 	CHelpers::CreateActorComponent(this, &StateComp, "StateComp");
+	CHelpers::CreateActorComponent(this, &FeetComp, "FeetComp");
 
 	// Create Scene Component
 	CHelpers::CreateSceneComponent(this, &SpringArmComp, "SpringArmComp", GetMesh());
@@ -272,13 +274,15 @@ void ACPlayer::Dead()
 	PostProcessComp->Settings.bOverride_DepthOfFieldFocalDistance = true;
 
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.25f);
-	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 2.f, false);
+	UKismetSystemLibrary::K2_SetTimer(this, "End_Dead", 1.f, false);
 }
 
 
 void ACPlayer::End_Dead()
 {
 	CLog::Print("Game Over");
+	//ActionComp->DestroyAll();
+	//Destroy();
 }
 
 void ACPlayer::Begin_Roll()
