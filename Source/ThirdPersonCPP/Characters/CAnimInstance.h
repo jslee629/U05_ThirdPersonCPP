@@ -31,4 +31,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Inverse Kinematics")
 	FFeetData FeetData;
+
+	UPROPERTY(BlueprintReadOnly, EditDefaultsOnly, Category = "Inverse Kinematics")
+	bool bIKMode;
 };

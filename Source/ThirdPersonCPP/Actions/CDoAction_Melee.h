@@ -16,9 +16,10 @@ public:
 	virtual void OnAttachmentEndOverlap(ACharacter* InAttacker, AActor* InCauser, ACharacter* InOtherCharacter) override;
 
 public:
-	virtual void DoAction();
-	virtual void Begin_DoAction();
-	virtual void End_DoAction();
+	virtual void DoAction() override;
+	virtual void Begin_DoAction() override;
+	virtual void End_DoAction() override;
+	virtual void Abort() override;
 
 	void EnableCombo();
 	void DisableCombo();

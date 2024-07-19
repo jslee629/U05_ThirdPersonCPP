@@ -15,7 +15,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 	if (AttachmentClass)
 	{
 		Attachment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACAttachment>(AttachmentClass, Transform, InOwnerCharacter);
-		Attachment->SetActorLabel(MakeActorLabel(InOwnerCharacter, "Attachment"));
+		//Attachment->SetActorLabel(MakeActorLabel(InOwnerCharacter, "Attachment"));
 		Attachment->FinishSpawning(Transform);
 	}
 
@@ -26,7 +26,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 		Equipment = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACEquipment>(EquipmentClass, Transform, InOwnerCharacter);
 		Equipment->SetData(EquipmentData);
 		Equipment->SetColor(EquipmentColor);
-		Equipment->SetActorLabel(MakeActorLabel(InOwnerCharacter, "Equipment"));
+		//Equipment->SetActorLabel(MakeActorLabel(InOwnerCharacter, "Equipment"));
 		Equipment->FinishSpawning(Transform);
 
 		if (AttachmentClass)
@@ -42,7 +42,7 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 	{
 		DoAction = InOwnerCharacter->GetWorld()->SpawnActorDeferred<ACDoAction>(DoActionClass, Transform, InOwnerCharacter);
 		DoAction->SetDatas(DoActionDatas);
-		DoAction->SetActorLabel(MakeActorLabel(InOwnerCharacter, "DoAction"));
+		//DoAction->SetActorLabel(MakeActorLabel(InOwnerCharacter, "DoAction"));
 		DoAction->AttachToComponent(InOwnerCharacter->GetMesh(), FAttachmentTransformRules(EAttachmentRule::KeepRelative, true));		// for Whirlwind
 		DoAction->FinishSpawning(Transform);
 
@@ -67,11 +67,12 @@ void UCActionData::BeginPlay(ACharacter* InOwnerCharacter, UCAction** OutAction)
 FString UCActionData::MakeActorLabel(ACharacter* InOwnerCharacter, FString InMiddleName)
 {
 	FString Label;
+	/*
 	Label.Append(InOwnerCharacter->GetActorLabel());
 	Label.Append("_");
 	Label.Append(InMiddleName);
 	Label.Append("_");
 	Label.Append(GetName().Replace(TEXT("DA_"), TEXT("")));
-
+	*/
 	return Label;
 }

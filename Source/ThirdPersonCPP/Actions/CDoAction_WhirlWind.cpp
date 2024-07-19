@@ -25,7 +25,7 @@ void ACDoAction_WhirlWind::BeginPlay()
 	//Children: Owner를 갖는 모든 Actor를 가져옴
 	for (const auto& Child : OwnerCharacter->Children)
 	{
-		if (Child->IsA<ACAttachment>() && Child->GetActorLabel().Contains("WhirlWind"))
+		if (Child->IsA<ACAttachment>() && Child->GetName().Contains("WhirlWind"))
 		{
 			BoxComp = CHelpers::GetComponent<UBoxComponent>(Child);
 			break;

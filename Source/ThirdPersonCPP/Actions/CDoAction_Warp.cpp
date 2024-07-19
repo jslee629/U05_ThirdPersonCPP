@@ -18,7 +18,7 @@ void ACDoAction_Warp::BeginPlay()
 	//OwnerCharacter를 Owner로 사용하고 있는 모든 액터를 반환
 	for (const auto& Child : OwnerCharacter->Children)
 	{
-		if (Child->IsA<ACAttachment>() && Child->GetActorLabel().Contains("Warp"))
+		if (Child->IsA<ACAttachment>() && Child->GetName().Contains("Warp"))
 		{
 			PreviewMeshComp = CHelpers::GetComponent<USkeletalMeshComponent>(Child);
 			break;
